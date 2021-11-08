@@ -1,7 +1,6 @@
 SHELL = /bin/sh
 .DEFAULT_GOAL := release
 COMMIT_HASH := $(shell git rev-parse --short HEAD)
-# WIDGET_DIR := ../x-widget
 WIDGET_DIR := ./x-payment-widget
 
 build: 
@@ -23,6 +22,10 @@ build-widget:
 clean:
 	@rm -rf bin
 	@rm -rf release
+	@rm public
+
+dev: build-widget
+	@ln -s ${WIDGET_DIR}/public .
 
 release: build-widget build
 	@mkdir -p release
