@@ -1,6 +1,8 @@
-// REST API accessible by merchants.
+// HTTP interface accessible by merchants.
+//
+// Contains: payment widget, REST API
 
-package api
+package server
 
 import (
 	"fmt"
@@ -10,10 +12,10 @@ import (
 )
 
 // Returns fiber REST API. Should be run in a goroutine with Listen()
-func NewApi() *fiber.App {
+func NewServer() *fiber.App {
 	app := fiber.New()
 
-	app.Get("/price", func(c *fiber.Ctx) error {
+	app.Get("/api/price", func(c *fiber.Ctx) error {
 		price := prices.Price(c.Query("to"), c.Query("from"))
 		if price == -1 {
 			return c.SendStatus(400)
@@ -21,10 +23,8 @@ func NewApi() *fiber.App {
 		return c.SendString(fmt.Sprint(price))
 	})
 
-	// Likely in future: serve static widget from local "public" directory
-	//
-	// Git submodule? Manually copy over? Copy via GH Actions?
-	// app.Static("/widget", "./public")
+	// Serve static widget
+	app.Static("/", "./public")
 
 	return app
 }

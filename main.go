@@ -1,11 +1,11 @@
 package main
 
 import (
-	"github.com/Super-Secret-Crypto-Kiddies/x-server/api"
+	"github.com/Super-Secret-Crypto-Kiddies/x-server/server"
 )
 
 func main() {
 	// Run this in a goroutine later.
-	api := api.NewApi()
-	api.Listen(":3000")
+	server := server.NewServer()
+	server.Listen(":3000")
 }
