@@ -22,6 +22,7 @@ func NewApi() *fiber.App {
 	})
 
 	// Likely in future: serve static widget from local "public" directory
+	//
 	// Git submodule? Manually copy over? Copy via GH Actions?
 	// app.Static("/widget", "./public")
 
