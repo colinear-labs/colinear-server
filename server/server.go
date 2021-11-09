@@ -41,16 +41,13 @@ func NewServer() *fiber.App {
 			return c.SendStatus(400)
 		}
 
-		fmt.Println(p.Currency)
-		fmt.Println(p.Base)
-
-		price := p.BasePrice / prices.Price(p.Base, p.Currency)
-		if price == -1 {
+		amount := p.BasePrice / prices.Price(p.Base, p.Currency)
+		if amount == -1 {
 			fmt.Println("Problem with price")
 			return c.SendStatus(400)
 		} else {
 			return c.JSON(fiber.Map{
-				"amount": price,
+				"amount": amount,
 			})
 		}
 	})
