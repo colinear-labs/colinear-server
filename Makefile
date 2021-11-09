@@ -30,7 +30,8 @@ dev: build-widget
 release: build-widget build
 	@mkdir -p release
 	@mkdir -p release/x-server-${COMMIT_HASH}
-	@cp -r bin/ release/x-server-${COMMIT_HASH}
+	@mv bin/* release/x-server-${COMMIT_HASH}
+	@rmdir bin
 	@cp -r ${WIDGET_DIR}/public release/x-server-${COMMIT_HASH}
 
 release-docker: release
