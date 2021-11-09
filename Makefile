@@ -22,10 +22,10 @@ build-widget:
 clean:
 	@rm -rf bin
 	@rm -rf release
-	@rm public
+	@rm -rf public
 
 dev: build-widget
-	@ln -s ${WIDGET_DIR}/public .
+	@cp -r ${WIDGET_DIR}/public .
 
 release: build-widget build
 	@mkdir -p release
