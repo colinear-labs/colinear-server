@@ -7,5 +7,5 @@ import (
 func main() {
 	// Run this in a goroutine later.
 	server := server.NewServer()
-	server.Listen(":3000")
+	server.Listen(":80")
 }
