@@ -42,7 +42,6 @@ func NewServer() *fiber.App {
 		p := new(PaymentIntentRequest)
 
 		if err := c.BodyParser(p); err != nil {
-			fmt.Println(p)
 			return c.SendStatus(400)
 		}
 
@@ -53,7 +52,6 @@ func NewServer() *fiber.App {
 		}
 
 		roundFactor := math.Pow(10, float64(currencies.Currencies[p.Currency].Decimals))
-		fmt.Println(roundFactor)
 		amount := math.Round((p.BasePrice/prices.Price(p.Base, p.Currency))*roundFactor) / roundFactor
 		if amount == -1 {
 			return c.SendStatus(400)
