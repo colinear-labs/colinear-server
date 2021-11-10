@@ -8,6 +8,7 @@ import (
 	"fmt"
 
 	"github.com/Super-Secret-Crypto-Kiddies/x-server/remote/prices"
+	"github.com/Super-Secret-Crypto-Kiddies/x-server/walletgen"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -28,9 +29,10 @@ func NewServer() *fiber.App {
 	})
 
 	type PaymentIntentRequest struct {
-		BasePrice float64 `json:basePrice`
-		Currency  string  `json:currency`
-		Base      string  `json:base`
+		BasePrice float64     `json:basePrice`
+		Currency  string      `json:currency`
+		Base      string      `json:base`
+		Metadata  interface{} `json:metadata`
 	}
 
 	app.Post("/api/createPaymentIntent", func(c *fiber.Ctx) error {
@@ -38,18 +40,25 @@ func NewServer() *fiber.App {
 		p := new(PaymentIntentRequest)
 
 		if err := c.BodyParser(p); err != nil {
+			fmt.Println(p)
+			return c.SendStatus(400)
+		}
+
+		wallet := walletgen.GenerateNewWallet(p.Currency)
+		address, err := wallet.GetAddress()
+		if err != nil {
 			return c.SendStatus(400)
 		}
 
 		amount := p.BasePrice / prices.Price(p.Base, p.Currency)
 		if amount == -1 {
-			fmt.Println("Problem with price")
 			return c.SendStatus(400)
-		} else {
-			return c.JSON(fiber.Map{
-				"amount": amount,
-			})
 		}
+
+		return c.JSON(fiber.Map{
+			"amount":  amount,
+			"address": address,
+		})
 	})
 
 	// Serve static widget
