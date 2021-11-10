@@ -6,7 +6,7 @@ type Currency struct {
 	Decimals  uint
 }
 
-var currencies = map[string]Currency{
+var Currencies = map[string]Currency{
 	"btc": {
 		Name:      "Bitcoin",
 		UrlPrefix: "bitcoin",

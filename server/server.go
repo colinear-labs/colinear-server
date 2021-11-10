@@ -6,7 +6,9 @@ package server
 
 import (
 	"fmt"
+	"math"
 
+	"github.com/Super-Secret-Crypto-Kiddies/x-server/currencies"
 	"github.com/Super-Secret-Crypto-Kiddies/x-server/remote/prices"
 	"github.com/Super-Secret-Crypto-Kiddies/x-server/walletgen"
 	"github.com/gofiber/fiber/v2"
@@ -50,7 +52,9 @@ func NewServer() *fiber.App {
 			return c.SendStatus(400)
 		}
 
-		amount := p.BasePrice / prices.Price(p.Base, p.Currency)
+		roundFactor := math.Pow(10, float64(currencies.Currencies[p.Currency].Decimals))
+		fmt.Println(roundFactor)
+		amount := math.Round((p.BasePrice/prices.Price(p.Base, p.Currency))*roundFactor) / roundFactor
 		if amount == -1 {
 			return c.SendStatus(400)
 		}
