@@ -8,7 +8,9 @@ import (
 	"fmt"
 	"math"
 
+	"github.com/Super-Secret-Crypto-Kiddies/x-server/config"
 	"github.com/Super-Secret-Crypto-Kiddies/x-server/currencies"
+	"github.com/Super-Secret-Crypto-Kiddies/x-server/flags"
 	"github.com/Super-Secret-Crypto-Kiddies/x-server/remote/prices"
 	"github.com/Super-Secret-Crypto-Kiddies/x-server/walletgen"
 	"github.com/gofiber/fiber/v2"
@@ -20,6 +22,26 @@ var IntentCache = make(map[string]interface{})
 // Returns fiber REST API. Should be run in a goroutine with Listen()
 func NewServer() *fiber.App {
 	app := fiber.New()
+
+	app.Get("/api/accepting", func(c *fiber.Ctx) error {
+		if flags.Mode == "single" {
+			addresses := []string{}
+			for k, v := range config.SingleConfig["addresses"].(map[interface{}]interface{}) {
+				if v != nil && v != "" {
+					addresses = append(addresses, fmt.Sprint(k))
+					if k == "eth" {
+						for _, token := range currencies.EthTokens {
+							addresses = append(addresses, token)
+						}
+					}
+				}
+			}
+			return c.JSON(addresses)
+		} else {
+			// Parameters will be parsed here & ignored if single mode
+			return c.JSON([]string{"Community node is not implemented yet."})
+		}
+	})
 
 	app.Get("/api/price", func(c *fiber.Ctx) error {
 		price := prices.Price(c.Query("to"), c.Query("from"))

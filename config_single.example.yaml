@@ -1,0 +1,8 @@
+addresses: # Addresses to pay out to 
+  btc: ""
+  bch: ""
+  ltc: ""
+  eth: ""
+  doge: ""
+preferences:
+  liquidate_erc20_tokens: "dai" # Liquidates ERC20 tokens to your desired stablecoin.

@@ -50,3 +50,5 @@ release/
 
 # Dev local testing stuff
 public/
+config_single.yaml
+config_community.yaml

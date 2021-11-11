@@ -48,3 +48,10 @@ var Currencies = map[string]Currency{
 		Decimals:  18,
 	},
 }
+
+var EthTokens = []string{
+	"dai",
+	"usdt",
+	"usdc",
+	"ust",
+}

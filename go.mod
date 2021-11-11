@@ -7,6 +7,7 @@ require (
 	github.com/gofiber/fiber/v2 v2.21.0
 	github.com/imroc/req v0.3.1
 	github.com/perlin-network/noise v1.1.3
+	gopkg.in/yaml.v2 v2.2.2
 )
 
 require (
