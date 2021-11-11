@@ -25,18 +25,18 @@ func NewServer() *fiber.App {
 
 	app.Get("/api/accepting", func(c *fiber.Ctx) error {
 		if flags.Mode == "single" {
-			addresses := []string{}
-			for k, v := range config.SingleConfig["addresses"].(map[interface{}]interface{}) {
+			wallets := []string{}
+			for k, v := range config.SingleConfig["wallets"].(map[interface{}]interface{}) {
 				if v != nil && v != "" {
-					addresses = append(addresses, fmt.Sprint(k))
+					wallets = append(wallets, fmt.Sprint(k))
 					if k == "eth" {
 						for _, token := range currencies.EthTokens {
-							addresses = append(addresses, token)
+							wallets = append(wallets, token)
 						}
 					}
 				}
 			}
-			return c.JSON(addresses)
+			return c.JSON(wallets)
 		} else {
 			// Parameters will be parsed here & ignored if single mode
 			return c.JSON([]string{"Community node is not implemented yet."})
