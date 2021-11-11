@@ -1,8 +1,33 @@
-addresses: # Addresses to pay out to 
+# Blockchain wallet addresses to pay out to. Chains not specified 
+# here will not show up in the payment options.
+wallets: 
   btc: ""
   bch: ""
   ltc: ""
   eth: ""
-  doge: ""
+  # doge: ""
+
 preferences:
-  liquidate_erc20_tokens: "dai" # Liquidates ERC20 tokens to your desired stablecoin.
+  # Choose which Ethereum tokens to accept directly. All other 
+  # Ethereum tokens will be liquidated to the token you select 
+  # for `liquidate_ethereum_tokens`.
+  # Supported tokens:
+  # ampl, dai, usdc, usdt, ust
+  ethereum_tokens:
+    - dai
+    - usdt
+  liquidate_ethereum_tokens: usdt
+
+  # Concept config. Subsequent contract chains should follow this pattern.
+  bsc_tokens:
+    - dai
+    - busd
+    - ccp
+  liquidate_bnb_tokens: busd
+
+  # Concept config. Subsequent contract chains should follow this pattern.
+  avax_tokens:
+    - dai
+    - ust
+    - ampl
+  liquidate_avax_tokens: dai
