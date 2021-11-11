@@ -17,7 +17,7 @@ func GenerateNewWallet(currency string) hdwallet.Wallet {
 	switch strings.ToLower(currency) {
 	case "btc":
 		ctype = hdwallet.BTC
-	case "eth", "dai", "usdt", "usdc", "ust":
+	case "eth", "dai", "usdc", "usdt", "ust", "ampl":
 		ctype = hdwallet.ETH
 	case "bch":
 		ctype = hdwallet.BCH

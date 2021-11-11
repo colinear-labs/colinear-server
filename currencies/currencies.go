@@ -47,6 +47,11 @@ var Currencies = map[string]Currency{
 		UrlPrefix: "usdc",
 		Decimals:  18,
 	},
+	"ampl": {
+		Name:      "Ampleforth",
+		UrlPrefix: "ampl",
+		Decimals:  9,
+	},
 }
 
 var EthTokens = []string{
@@ -54,4 +59,5 @@ var EthTokens = []string{
 	"usdt",
 	"usdc",
 	"ust",
+	"ampl",
 }
