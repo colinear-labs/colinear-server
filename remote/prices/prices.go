@@ -42,6 +42,9 @@ func Price(from string, to string) float64 {
 	f := strings.ToUpper(from)
 	t := strings.ToUpper(to)
 	price := priceCoinbase(f, t)
+	if price == -1 {
+		price = priceBinance(f, t)
+	}
 	return price
 }
 
@@ -55,8 +58,21 @@ func priceBinance(from string, to string) float64 {
 		return -1
 	}
 
-	fmt.Sprint(res)
-	return 0
+	body := make(map[string]interface{})
+
+	res.ToJSON(&body)
+
+	if body["code"] != nil {
+		return -1
+	}
+	data := body["price"]
+
+	amount, err := strconv.ParseFloat(data.(string), 64)
+	if err != nil {
+		return -1
+	}
+
+	return amount
 }
 
 func priceCoinbase(from string, to string) float64 {
