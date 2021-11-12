@@ -86,7 +86,7 @@ func NewServer() *fiber.App {
 	})
 
 	// Serve static widget
-	app.Static("/", "./public")
+	app.Static("/widget", "./widget")
 
 	return app
 }

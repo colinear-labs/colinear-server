@@ -22,16 +22,16 @@ build-widget:
 clean:
 	@rm -rf bin
 	@rm -rf release
-	@rm -rf public
+	@rm -rf widget
 
 dev: build-widget
-	@cp -r ${WIDGET_DIR}/public .
+	@cp -r ${WIDGET_DIR}/public ./widget
 
 release: build-widget build
 	@mkdir -p release
 	@mkdir -p release/x-server-${COMMIT_HASH}
 	@mv bin/* release/x-server-${COMMIT_HASH}
 	@rmdir bin
-	@cp -r ${WIDGET_DIR}/public release/x-server-${COMMIT_HASH}
+	@cp -r ${WIDGET_DIR}/public release/x-server-${COMMIT_HASH}/widget
 
 release-docker: release

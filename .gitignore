@@ -50,5 +50,7 @@ release/
 
 # Dev local testing stuff
 public/
+widget/
+webui/
 config_single.yaml
 config_community.yaml
