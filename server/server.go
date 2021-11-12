@@ -88,5 +88,9 @@ func NewServer() *fiber.App {
 	// Serve static widget
 	app.Static("/widget", "./widget")
 
+	if flags.Mode == "community" {
+		app.Static("/webui", "./webui")
+	}
+
 	return app
 }

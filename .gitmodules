@@ -1,3 +1,6 @@
 [submodule "x-payment-widget"]
 	path = x-payment-widget
 	url = https://github.com/Super-Secret-Crypto-Kiddies/x-payment-widget
+[submodule "x-webui"]
+	path = x-webui
+	url = https://github.com/Super-Secret-Crypto-Kiddies/x-webui

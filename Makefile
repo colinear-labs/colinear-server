@@ -2,6 +2,7 @@ SHELL = /bin/sh
 .DEFAULT_GOAL := release
 COMMIT_HASH := $(shell git rev-parse --short HEAD)
 WIDGET_DIR := ./x-payment-widget
+WEBUI_DIR := ./x-webui
 
 build: 
 	@mkdir -p bin && \
@@ -19,13 +20,20 @@ build-widget:
 	yarn && \
 	yarn build
 
+build-webui:
+	@cd x-webui && \
+	echo Building merchant web UI. && \
+	yarn && \
+	yarn build
+
 clean:
 	@rm -rf bin
 	@rm -rf release
 	@rm -rf widget
 
-dev: build-widget
+dev: build-widget build-webui
 	@cp -r ${WIDGET_DIR}/public ./widget
+	@cp -r ${WEBUI_DIR}/public ./webui
 
 release: build-widget build
 	@mkdir -p release
@@ -33,5 +41,6 @@ release: build-widget build
 	@mv bin/* release/x-server-${COMMIT_HASH}
 	@rmdir bin
 	@cp -r ${WIDGET_DIR}/public release/x-server-${COMMIT_HASH}/widget
+	@cp -r ${WEBUI_DIR}/public release/x-server-${COMMIT_HASH}/webui
 
 release-docker: release
