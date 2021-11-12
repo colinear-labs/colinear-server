@@ -1,22 +1,26 @@
-# Crypto wallets to pay out to.
+# Crypto wallets to pay out to. Currencies specified here 
+# will show up on the payment widget.
+
 # Supported currencies: 
-# ---- MAIN CHAINS ----
-# btc, bch, ltc, doge
-# ---- SMART CHAINS ----
-# eth
-# ---- STABLECOINS ----
-# Ethereum: usdt, usdc, dai, ust
+
+# --- MAIN CHAINS ---
+# btc, bch, ltc, eth, doge
+
+# --- ETHERUEM TOKENS ---
+# usdt, usdc, dai, ust
 
 wallets: 
-  btc: ""
-  bch: ""
-  ltc: ""
-  eth: ""
-  doge: ""
-  dai: ""
-  usdt: ""
-  usdc: ""
-  ust: ""
+  btc: "<BITCOIN ADDRESS>"
+  bch: "<BITCOIN CASH ADDRESS"
+  ltc: "<LITECOIN ADDRESS>"
+  eth: "<ETHEREUM ADDRESS>"
+  doge: "<DOGECOIN ADDRESS>"
+  dai: "<ETHEREUM ADDRESS>"
+  usdt: "<ETHEREUM ADDRESS>"
+  usdc: "<ETHEREUM ADDRESS>"
+  ust: "<ETHEREUM ADDRESS>"
 
 options:
-  liquidate_eth_tokens: usdt
+  # NOTE: This option requires a valid address 
+  # for the desired stablecoin to be set above
+  liquidate_eth_tokens: ust
