@@ -8,8 +8,9 @@ import (
 	"github.com/foxnut/go-hdwallet"
 )
 
+var mnemonic, _ = hdwallet.NewMnemonic(12, "en")
 var Master, err = hdwallet.NewKey(
-	hdwallet.Mnemonic("range sheriff try enroll deer over ten level bring display stamp recycle"),
+	hdwallet.Mnemonic(mnemonic),
 )
 
 func GenerateNewWallet(currency string) hdwallet.Wallet {
