@@ -33,15 +33,19 @@ clean:
 	@rm -rf webui
 
 dev: build-widget build-webui
-	@cp -r ${WIDGET_DIR}/public ./widget
-	@cp -r ${WEBUI_DIR}/public ./webui
+	@mkdir -p ./widget
+	@mkdir -p ./webui
+	@cp -r ${WIDGET_DIR}/public/* ./widget
+	@cp -r ${WEBUI_DIR}/public/* ./webui
 
 release: build-widget build
 	@mkdir -p release
 	@mkdir -p release/x-server-${COMMIT_HASH}
 	@mv bin/* release/x-server-${COMMIT_HASH}
 	@rmdir bin
-	@cp -r ${WIDGET_DIR}/public release/x-server-${COMMIT_HASH}/widget
-	@cp -r ${WEBUI_DIR}/public release/x-server-${COMMIT_HASH}/webui
+	@mkdir -p release/x-server-${COMMIT_HASH}/widget
+	@mkdir -p release/x-server-${COMMIT_HASH}/webui
+	@cp -r ${WIDGET_DIR}/public/* release/x-server-${COMMIT_HASH}/widget
+	@cp -r ${WEBUI_DIR}/public/* release/x-server-${COMMIT_HASH}/webui
 
 release-docker: release
