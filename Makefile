@@ -30,7 +30,7 @@ clean:
 	@rm -rf bin
 	@rm -rf release
 	@rm -rf widget
-	rm -rf webui
+	@rm -rf webui
 
 dev: build-widget build-webui
 	@cp -r ${WIDGET_DIR}/public ./widget
