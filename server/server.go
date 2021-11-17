@@ -9,10 +9,10 @@ import (
 	"math"
 
 	"github.com/Super-Secret-Crypto-Kiddies/x-server/config"
-	"github.com/Super-Secret-Crypto-Kiddies/x-server/currencies"
 	"github.com/Super-Secret-Crypto-Kiddies/x-server/flags"
 	"github.com/Super-Secret-Crypto-Kiddies/x-server/remote/prices"
 	"github.com/Super-Secret-Crypto-Kiddies/x-server/walletgen"
+	"github.com/Super-Secret-Crypto-Kiddies/x-server/xutil/currencies"
 	"github.com/gofiber/fiber/v2"
 )
 

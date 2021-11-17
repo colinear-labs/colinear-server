@@ -4,3 +4,6 @@
 [submodule "x-webui"]
 	path = x-webui
 	url = https://github.com/Super-Secret-Crypto-Kiddies/x-webui
+[submodule "xutil"]
+	path = xutil
+	url = https://github.com/Super-Secret-Crypto-Kiddies/x-util
