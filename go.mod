@@ -18,16 +18,8 @@ require (
 	github.com/btcsuite/btcutil v0.0.0-20190425235716-9e5f4b9a998d // indirect
 	github.com/cpacia/bchutil v0.0.0-20181003130114-b126f6a35b6c // indirect
 	github.com/ethereum/go-ethereum v1.9.13 // indirect
-	github.com/fasthttp/websocket v1.4.3-beta.1 // indirect
-	github.com/gofiber/fiber v1.13.3 // indirect
-	github.com/gofiber/utils v0.0.9 // indirect
-	github.com/gofiber/websocket v0.5.1 // indirect
-	github.com/gorilla/schema v1.1.0 // indirect
 	github.com/klauspost/compress v1.13.4 // indirect
-	github.com/mattn/go-colorable v0.1.7 // indirect
-	github.com/mattn/go-isatty v0.0.12 // indirect
 	github.com/oasislabs/ed25519 v0.0.0-20200302143042-29f6767a7c3e // indirect
-	github.com/savsgio/gotils v0.0.0-20200616100644-13ff1fd2c28c // indirect
 	github.com/tyler-smith/go-bip39 v1.0.2 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasthttp v1.31.0 // indirect

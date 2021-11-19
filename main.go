@@ -8,6 +8,7 @@ import (
 
 	"github.com/Super-Secret-Crypto-Kiddies/x-server/config"
 	"github.com/Super-Secret-Crypto-Kiddies/x-server/flags"
+	"github.com/Super-Secret-Crypto-Kiddies/x-server/p2p"
 	"github.com/Super-Secret-Crypto-Kiddies/x-server/server"
 )
 
@@ -36,6 +37,9 @@ func main() {
 
 		panic("Community node is not implemented yet.")
 	}
+
+	// Find peers from bootstrap nodes over noise via kademlia
+	p2p.FindPeers(p2p.Node)
 
 	server := server.NewServer()
 	log.Fatal(server.Listen(fmt.Sprintf(":%d", *port)))
