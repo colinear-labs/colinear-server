@@ -5,7 +5,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/Super-Secret-Crypto-Kiddies/x-server/xutil"
+	"xserver/xutil"
+
 	"github.com/perlin-network/noise"
 	"github.com/perlin-network/noise/kademlia"
 )

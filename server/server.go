@@ -7,12 +7,14 @@ package server
 import (
 	"fmt"
 	"math"
+	"time"
 
-	"github.com/Super-Secret-Crypto-Kiddies/x-server/config"
-	"github.com/Super-Secret-Crypto-Kiddies/x-server/flags"
-	"github.com/Super-Secret-Crypto-Kiddies/x-server/remote/prices"
-	"github.com/Super-Secret-Crypto-Kiddies/x-server/walletgen"
-	"github.com/Super-Secret-Crypto-Kiddies/x-server/xutil/currencies"
+	"xserver/config"
+	"xserver/flags"
+	"xserver/remote/prices"
+	"xserver/walletgen"
+	"xserver/xutil/currencies"
+
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -78,6 +80,30 @@ func NewServer() *fiber.App {
 		if amount == -1 {
 			return c.SendStatus(400)
 		}
+
+		go func() {
+
+			// Verified timeout
+			pTimeout := currencies.Currencies[p.Currency].PendingTimeoutSeconds
+			// vTimeout := 60 * 60 * 24
+
+			t := make(chan string, 1)
+
+			go func() {
+			}()
+
+			select {
+
+			case res := <-t:
+				// REPLACE WITH WEBHOOK LATER
+				fmt.Printf("Confirmed %s\n", res)
+
+			case <-time.After(time.Duration(pTimeout) * time.Second):
+				// REPLACE WITH WEBHOOK LATER
+				fmt.Printf("Intent timed out after %d seconds\n", pTimeout)
+			}
+
+		}()
 
 		return c.JSON(fiber.Map{
 			"amount":  amount,

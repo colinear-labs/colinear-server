@@ -1,4 +1,4 @@
-module github.com/Super-Secret-Crypto-Kiddies/x-server
+module xserver
 
 go 1.17
 

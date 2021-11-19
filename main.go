@@ -6,10 +6,10 @@ import (
 	"log"
 	"strings"
 
-	"github.com/Super-Secret-Crypto-Kiddies/x-server/config"
-	"github.com/Super-Secret-Crypto-Kiddies/x-server/flags"
-	"github.com/Super-Secret-Crypto-Kiddies/x-server/p2p"
-	"github.com/Super-Secret-Crypto-Kiddies/x-server/server"
+	"xserver/config"
+	"xserver/flags"
+	"xserver/p2p"
+	"xserver/server"
 )
 
 func main() {
