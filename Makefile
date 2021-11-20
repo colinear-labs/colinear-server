@@ -7,12 +7,17 @@ WEBUI_DIR := ./x-webui
 build: 
 	@mkdir -p bin && \
 	echo Building x-server for all architectures.
-	GOOS=linux GOARCH=arm go build -o bin/xserver-linux-arm; \
-	GOOS=linux GOARCH=arm64 go build -o bin/xserver-linux-arm64; \
-	GOOS=linux GOARCH=386 go build -o bin/xserver-linux-386; \
-	GOOS=linux GOARCH=amd64 go build -o bin/xserver-linux-amd64; \
-	GOOS=darwin GOARCH=amd64 go build -o bin/xserver-darwin-amd64; \
-	GOOS=darwin GOARCH=arm64 go build -o bin/xserver-darwin-arm64; \
+	GOOS=linux GOARCH=arm go build -o bin/x-server-linux-arm; \
+	GOOS=linux GOARCH=arm64 go build -o bin/x-server-linux-arm64; \
+	GOOS=linux GOARCH=386 go build -o bin/x-server-linux-386; \
+	GOOS=linux GOARCH=amd64 go build -o bin/x-server-linux-amd64; \
+	GOOS=darwin GOARCH=amd64 go build -o bin/x-server-darwin-amd64; \
+	GOOS=darwin GOARCH=arm64 go build -o bin/x-server-darwin-arm64; \
+
+build-local:
+	@mkdir -p bin && \
+	echo Building x-server for all currenct architecture.
+	go build -o bin/x-server; \
 
 build-widget:
 	@cd x-payment-widget && \
@@ -38,7 +43,7 @@ dev: build-widget build-webui
 	@cp -r ${WIDGET_DIR}/public/* ./widget
 	@cp -r ${WEBUI_DIR}/public/* ./webui
 
-release: build-widget build
+release: build-widget build-webui build
 	@mkdir -p release
 	@mkdir -p release/x-server-${COMMIT_HASH}
 	@mv bin/* release/x-server-${COMMIT_HASH}
