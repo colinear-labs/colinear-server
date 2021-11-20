@@ -1,3 +1,7 @@
+# Authentication secret proving that webhooks received are from this server
+auth:
+  secret: "<SECURE, RANDOM STRING>"
+
 # Crypto wallets to pay out to. Currencies specified here 
 # will show up on the payment widget.
 
