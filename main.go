@@ -8,7 +8,6 @@ import (
 
 	"xserver/config"
 	"xserver/flags"
-	"xserver/p2p"
 	"xserver/server"
 )
 
@@ -37,9 +36,6 @@ func main() {
 
 		panic("Community node is not implemented yet.")
 	}
-
-	// Find peers from bootstrap nodes over noise via kademlia
-	p2p.FindPeers(p2p.Node)
 
 	server := server.NewServer()
 	log.Fatal(server.Listen(fmt.Sprintf(":%d", *port)))
