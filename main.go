@@ -8,6 +8,7 @@ import (
 
 	"xserver/config"
 	"xserver/flags"
+	"xserver/intents"
 	"xserver/server"
 )
 
@@ -37,6 +38,7 @@ func main() {
 		panic("Community node is not implemented yet.")
 	}
 
+	intents.InitIntents()
 	server := server.NewServer()
 	log.Fatal(server.Listen(fmt.Sprintf(":%d", *port)))
 }
