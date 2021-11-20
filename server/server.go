@@ -21,9 +21,6 @@ import (
 	"github.com/patrickmn/go-cache"
 )
 
-// SUBJECT TO CHANGE
-var IntentCache = make(map[string]interface{})
-
 // Returns fiber REST API. Should be run in a goroutine with Listen()
 func NewServer() *fiber.App {
 	app := fiber.New()
@@ -35,9 +32,7 @@ func NewServer() *fiber.App {
 				if v != nil && v != "" {
 					wallets = append(wallets, fmt.Sprint(k))
 					if k == "eth" {
-						for _, token := range currencies.EthTokens {
-							wallets = append(wallets, token)
-						}
+						wallets = append(wallets, currencies.EthTokens...)
 					}
 				}
 			}
@@ -58,10 +53,10 @@ func NewServer() *fiber.App {
 	})
 
 	type PaymentIntentRequest struct {
-		BasePrice float64     `json:basePrice`
-		Currency  string      `json:currency`
-		Base      string      `json:base`
-		Metadata  interface{} `json:metadata`
+		BasePrice float64     `json:"basePrice"`
+		Currency  string      `json:"currency"`
+		Base      string      `json:"base"`
+		Metadata  interface{} `json:"metadata"`
 	}
 
 	app.Post("/api/createPaymentIntent", func(c *fiber.Ctx) error {
