@@ -90,13 +90,23 @@ func InitP2P() {
 
 }
 
-func SendPaymentIntent(intent xutil.PaymentIntent) {
+func SendPaymentIntent(intent xutil.PaymentIntent) error {
 
 	timeoutCtx, _ := context.WithTimeout(context.Background(), time.Duration(5*time.Second))
 
+	allowableErrs := len(XNodePeers)
+	errCount := 0
 	for _, peer := range XNodePeers {
 		if err := Node.SendMessage(timeoutCtx, peer.Address, intent); err != nil {
+			errCount += 1
 			fmt.Printf("SENDMESSAGE ERROR: %s\n", err)
 		}
 	}
+
+	if allowableErrs-errCount <= 0 {
+		return fmt.Errorf("Not enough nodes were contacted.")
+	} else {
+		return nil
+	}
+
 }

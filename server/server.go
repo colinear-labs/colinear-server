@@ -86,7 +86,9 @@ func NewServer() *fiber.App {
 			Amount:   big.NewFloat(amount),
 		}
 
-		p2p.SendPaymentIntent(intent)
+		if err := p2p.SendPaymentIntent(intent); err != nil {
+			fmt.Println(err)
+		}
 		intents.WatchPendingCache.Set(address, intent, cache.DefaultExpiration)
 
 		return c.JSON(fiber.Map{
