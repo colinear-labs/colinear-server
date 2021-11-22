@@ -12,6 +12,7 @@ import (
 	"xserver/config"
 	"xserver/flags"
 	"xserver/intents"
+	"xserver/p2p"
 	"xserver/remote/prices"
 	"xserver/walletgen"
 	"xserver/xutil"
@@ -79,11 +80,14 @@ func NewServer() *fiber.App {
 			return c.SendStatus(400)
 		}
 
-		intents.WatchPendingCache.Set(address, xutil.PaymentIntent{
+		intent := xutil.PaymentIntent{
 			To:       address,
 			Currency: p.Currency,
 			Amount:   big.NewFloat(amount),
-		}, cache.DefaultExpiration)
+		}
+
+		p2p.SendPaymentIntent(intent)
+		intents.WatchPendingCache.Set(address, intent, cache.DefaultExpiration)
 
 		return c.JSON(fiber.Map{
 			"amount":  amount,

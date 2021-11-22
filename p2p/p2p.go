@@ -19,7 +19,7 @@ var BoostrapNodes = [...]string{
 }
 
 var Node *noise.Node = nil
-var Peers = []noise.ID{}
+var XNodePeers = []noise.ID{}
 
 func InitP2P() {
 
@@ -78,7 +78,6 @@ func InitP2P() {
 	})
 
 	timeoutCtx, _ := context.WithTimeout(context.Background(), time.Duration(5*time.Second))
-
 	for _, address := range BoostrapNodes {
 		go func(addr string) {
 			if _, err := Node.Ping(timeoutCtx, addr); err != nil {
@@ -87,6 +86,17 @@ func InitP2P() {
 		}(address)
 	}
 
-	Peers = k.Discover()
+	XNodePeers = k.Discover()
 
+}
+
+func SendPaymentIntent(intent xutil.PaymentIntent) {
+
+	timeoutCtx, _ := context.WithTimeout(context.Background(), time.Duration(5*time.Second))
+
+	for _, peer := range XNodePeers {
+		if err := Node.SendMessage(timeoutCtx, peer.Address, intent); err != nil {
+			fmt.Printf("SENDMESSAGE ERROR: %s\n", err)
+		}
+	}
 }
