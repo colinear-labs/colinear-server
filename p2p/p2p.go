@@ -104,9 +104,29 @@ func SendPaymentIntent(intent xutil.PaymentIntent) error {
 	}
 
 	if allowableErrs-errCount <= 0 {
-		return fmt.Errorf("Not enough nodes were contacted.")
+		return fmt.Errorf("not enough nodes were contacted")
 	} else {
 		return nil
 	}
 
+}
+
+func SendPaymentCancellation(cancellation xutil.PaymentCancellation) error {
+
+	timeoutCtx, _ := context.WithTimeout(context.Background(), time.Duration(5*time.Second))
+
+	allowableErrs := len(XNodePeers)
+	errCount := 0
+	for _, peer := range XNodePeers {
+		if err := Node.SendMessage(timeoutCtx, peer.Address, cancellation); err != nil {
+			errCount += 1
+			fmt.Printf("SENDMESSAGE ERROR: %s\n", err)
+		}
+	}
+
+	if allowableErrs-errCount <= 0 {
+		return fmt.Errorf("not enough nodes were contacted")
+	} else {
+		return nil
+	}
 }

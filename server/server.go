@@ -97,6 +97,30 @@ func NewServer() *fiber.App {
 		})
 	})
 
+	type PaymentCancellationRequest struct {
+		Address string
+	}
+
+	app.Post("/api/cancelPaymentIntent", func(c *fiber.Ctx) error {
+		p := new(PaymentCancellationRequest)
+
+		if err := c.BodyParser(p); err != nil {
+			return c.SendStatus(400)
+		}
+
+		cancellation := xutil.PaymentCancellation{
+			Address: p.Address,
+		}
+
+		if err := p2p.SendPaymentCancellation(cancellation); err != nil {
+			fmt.Println(err)
+			return c.SendStatus(400)
+		} else {
+			return c.SendStatus(200)
+		}
+
+	})
+
 	// Serve static widget
 	app.Static("/widget", "./widget")
 
