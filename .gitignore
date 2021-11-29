@@ -48,7 +48,8 @@ Temporary Items
 bin/
 release/
 
-# Dev local testing stuff
+# Dev/local/testing stuff
+.vscode/
 public/
 widget/
 webui/
