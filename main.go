@@ -35,7 +35,7 @@ func main() {
 	} else if flags.Mode == "community" {
 		// preflight checks for web UI API will go here
 
-		panic("Community node is not implemented yet.")
+		panic("Community mode is not implemented yet.")
 	}
 
 	intents.InitIntents()
