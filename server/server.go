@@ -33,7 +33,7 @@ func NewServer() *fiber.App {
 				if v != nil && v != "" {
 					wallets = append(wallets, fmt.Sprint(k))
 					if k == "eth" {
-						wallets = append(wallets, currencies.EthTokens...)
+						wallets = append(wallets, currencies.EthTokensOld...)
 					}
 				}
 			}
@@ -74,7 +74,7 @@ func NewServer() *fiber.App {
 			return c.SendStatus(400)
 		}
 
-		roundFactor := math.Pow(10, float64(currencies.Currencies[p.Currency].Decimals))
+		roundFactor := math.Pow(10, float64(currencies.CurrencyData[p.Currency].Decimals))
 		amount := math.Round((p.BasePrice/prices.Price(p.Base, p.Currency))*roundFactor) / roundFactor
 		if amount == -1 {
 			return c.SendStatus(400)

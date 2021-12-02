@@ -30,16 +30,12 @@ func GenerateNewWallet(currency string) hdwallet.Wallet {
 	case "doge":
 		ctype = hdwallet.DOGE
 	default: // else - unknown
-		for _, x := range currencies.EthTokens {
-			if curr == x {
-				ctype = hdwallet.ETH
-				goto currencyFound
-			}
+		switch currencies.CurrencyData[curr].Type {
+		case currencies.EthToken:
+			ctype = hdwallet.ETH
 		}
 		// can check other currencies down here if necessary
 	}
-
-currencyFound:
 
 	addressIndex := rand.Uint32()
 	wallet, err := Master.GetWallet(hdwallet.CoinType(ctype), hdwallet.AddressIndex(addressIndex))
