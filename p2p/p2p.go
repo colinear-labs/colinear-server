@@ -9,38 +9,46 @@ import (
 	"xserver/intents"
 	"xserver/xutil"
 	"xserver/xutil/currencies"
+	"xserver/xutil/p2pshared"
 
 	"github.com/patrickmn/go-cache"
 	"github.com/perlin-network/noise"
 	"github.com/perlin-network/noise/kademlia"
+	"go.uber.org/zap"
 )
 
-var BootstrapNodes = [...]string{
-	"10.142.24.106", // temp local address of thinkpad
-}
-
 var Node *noise.Node = nil
-var XNodePeers = []noise.ID{}
+var Peers = []noise.ID{}
+var NodePeers = []noise.ID{}
 
 func InitP2P() {
 
-	Node, _ = noise.NewNode(noise.WithNodeBindPort(9871))
+	logger, err := zap.NewDevelopment(zap.AddStacktrace(zap.PanicLevel))
 
-	Node.RegisterMessage(xutil.PaymentIntent{}, xutil.UnmarshalPaymentIntent)
-	Node.RegisterMessage(xutil.PaymentResponse{}, xutil.UnmarshalPaymentResponse)
-
-	// Figure out how to broadcast supported currencies
-	// on peer connect
-	k := kademlia.New()
-	Node.Bind(k.Protocol())
-
-	if err := Node.Listen(); err != nil {
+	if err != nil {
 		panic(err)
 	}
 
-	// Handle replies from other nodes
-	// NOTE: Figure out if we need waigroups (sync.WaitGroup)
+	defer logger.Sync()
+
+	Node, _ = noise.NewNode(
+		noise.WithNodeLogger(logger),
+		noise.WithNodeBindPort(9871),
+	)
+
+	// stop manually registering for now
+	xutil.RegisterNodeMessages(Node)
+
+	// Node.RegisterMessage(xutil.PeerInfo{}, xutil.UnmarshalPeerInfo)
+	// Node.RegisterMessage(xutil.PaymentIntent{}, xutil.UnmarshalPaymentIntent)
+	// Node.RegisterMessage(xutil.PaymentResponse{}, xutil.UnmarshalPaymentResponse)
+
 	Node.Handle(func(ctx noise.HandlerContext) error {
+
+		if ctx.IsRequest() {
+			return nil
+		}
+
 		obj, err := ctx.DecodeMessage()
 		if err != nil {
 			return nil
@@ -91,17 +99,40 @@ func InitP2P() {
 		return nil
 	})
 
-	timeoutCtx, _ := context.WithTimeout(context.Background(), time.Duration(5*time.Second))
-	for _, addr := range BootstrapNodes {
-		if _, err := Node.Ping(timeoutCtx, addr+":9000"); err != nil {
-			fmt.Printf("Failed to ping node at %s.\n", addr)
+	k := kademlia.New()
+	Node.Bind(k.Protocol())
+
+	if err := Node.Listen(); err != nil {
+		panic(err)
+	}
+
+	for _, addr := range p2pshared.BootstrapNodes {
+		timeoutCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		_, err := Node.Ping(timeoutCtx, addr+":9871")
+		cancel()
+		if err != nil {
+			fmt.Printf("Failed to ping bootstrap node at %s.\n", addr)
 		} else {
-			fmt.Printf("Pinged node at %s.\n", addr)
+			fmt.Printf("Pinged bootstrap node at %s.\n", addr)
 		}
 	}
 
-	XNodePeers = k.Discover()
-	fmt.Printf("Peers: %s", fmt.Sprint(XNodePeers))
+	go func() {
+
+		for {
+
+			Peers = k.Discover()
+			// fmt.Printf("Peers: %s\n", fmt.Sprint(k.Table().Peers()))
+			fmt.Printf("Peers: %s\n", fmt.Sprint(Peers))
+
+			// wait 10 mins before refreshing peer list
+			// Could be subject to change
+			// time.Sleep(10 * time.Minute)
+			time.Sleep(5 * time.Second)
+
+		}
+
+	}()
 
 }
 
@@ -121,9 +152,9 @@ func SendPaymentIntent(intent xutil.PaymentIntent) error {
 
 	timeoutCtx, _ := context.WithTimeout(context.Background(), time.Duration(5*time.Second))
 
-	allowableErrs := len(XNodePeers)
+	allowableErrs := len(Peers)
 	errCount := 0
-	for _, peer := range XNodePeers {
+	for _, peer := range Peers {
 		if err := Node.SendMessage(timeoutCtx, peer.Address, intent); err != nil {
 			errCount += 1
 			fmt.Printf("SENDMESSAGE ERROR: %s\n", err)
@@ -131,6 +162,12 @@ func SendPaymentIntent(intent xutil.PaymentIntent) error {
 			fmt.Printf("Sent intent to node %s", peer.Address)
 		}
 	}
+
+	// if err := Node.SendMessage(timeoutCtx, "10.142.26.69:9871", intent); err != nil {
+	// 	fmt.Printf("ERROR %s\n", err)
+	// } else {
+	// 	fmt.Println("Successfully sent message to node")
+	// }
 
 	if allowableErrs-errCount <= 0 {
 		return fmt.Errorf("not enough nodes were contacted")
@@ -144,9 +181,9 @@ func SendPaymentCancellation(cancellation xutil.PaymentCancellation) error {
 
 	timeoutCtx, _ := context.WithTimeout(context.Background(), time.Duration(5*time.Second))
 
-	allowableErrs := len(XNodePeers)
+	allowableErrs := len(Peers)
 	errCount := 0
-	for _, peer := range XNodePeers {
+	for _, peer := range Peers {
 		if err := Node.SendMessage(timeoutCtx, peer.Address, cancellation); err != nil {
 			errCount += 1
 			fmt.Printf("SENDMESSAGE ERROR: %s\n", err)
