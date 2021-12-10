@@ -9,12 +9,12 @@ import (
 	"xserver/intents"
 	"xserver/xutil"
 	"xserver/xutil/currencies"
+	"xserver/xutil/ipassign"
 	"xserver/xutil/p2pshared"
 
 	"github.com/patrickmn/go-cache"
 	"github.com/perlin-network/noise"
 	"github.com/perlin-network/noise/kademlia"
-	"go.uber.org/zap"
 )
 
 var Node *noise.Node = nil
@@ -23,17 +23,22 @@ var NodePeers = []noise.ID{}
 
 func InitP2P() {
 
-	logger, err := zap.NewDevelopment(zap.AddStacktrace(zap.PanicLevel))
+	// logger, err := zap.NewDevelopment(zap.AddStacktrace(zap.PanicLevel))
 
-	if err != nil {
-		panic(err)
-	}
+	// if err != nil {
+	// 	panic(err)
+	// }
 
-	defer logger.Sync()
+	// defer logger.Sync()
+
+	port := 9871
+	broadcastIp := ipassign.GetIPv6Address()
 
 	Node, _ = noise.NewNode(
-		noise.WithNodeLogger(logger),
-		noise.WithNodeBindPort(9871),
+		// noise.WithNodeLogger(logger),
+		noise.WithNodeAddress(fmt.Sprintf("[%s]:%d", broadcastIp, port)),
+		// noise.WithNodeAddress(broadcastIp),
+		noise.WithNodeBindPort((uint16)(port)),
 	)
 
 	// stop manually registering for now
@@ -127,8 +132,7 @@ func InitP2P() {
 
 			// wait 10 mins before refreshing peer list
 			// Could be subject to change
-			// time.Sleep(10 * time.Minute)
-			time.Sleep(5 * time.Second)
+			time.Sleep(10 * time.Minute)
 
 		}
 
@@ -159,7 +163,7 @@ func SendPaymentIntent(intent xutil.PaymentIntent) error {
 			errCount += 1
 			fmt.Printf("SENDMESSAGE ERROR: %s\n", err)
 		} else {
-			fmt.Printf("Sent intent to node %s", peer.Address)
+			fmt.Printf("Sent intent to node %s\n", peer.Address)
 		}
 	}
 
