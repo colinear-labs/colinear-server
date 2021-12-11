@@ -19,7 +19,8 @@ import (
 
 var Node *noise.Node = nil
 var Peers = []noise.ID{}
-var NodePeers = []noise.ID{}
+var NodePeers = make(map[string]noise.ID)
+var NodePeerCurrencies = make(map[string][]string)
 
 func InitP2P() {
 
@@ -87,6 +88,40 @@ func InitP2P() {
 			return nil
 		}
 
+		// PeerInfo responses
+
+		peerInfo, ok := obj.(xutil.PeerInfo)
+		if ok {
+
+			// log occurrence
+			fmt.Printf("PEERINFO %s\n", peerInfo.Marshal())
+
+			if peerInfo.Type == xutil.Node {
+
+				// this is embarrassingly inefficient but oh well
+
+				added := false
+
+			currencyCheck:
+				for _, c := range currencies.Currencies {
+					for _, nc := range peerInfo.Currencies {
+						if c == nc {
+							fmt.Printf("Full node peer supports local currency %s. Added to NodePeers.\n", c)
+							NodePeers[ctx.ID().Address] = ctx.ID()
+							NodePeerCurrencies[ctx.ID().Address] = peerInfo.Currencies
+							added = true
+							break currencyCheck
+						}
+					}
+				}
+
+				if !added {
+					fmt.Printf("Full node peer %s does not support any local currencies.\n", ctx.ID().Address)
+				}
+
+			}
+		}
+
 		// regular byte-encoded signals
 
 		strRes := (string)(ctx.Data())
@@ -127,8 +162,30 @@ func InitP2P() {
 		for {
 
 			Peers = k.Discover()
-			// fmt.Printf("Peers: %s\n", fmt.Sprint(k.Table().Peers()))
-			fmt.Printf("Peers: %s\n", fmt.Sprint(Peers))
+			fmt.Printf("%d peers detected.\n%s\n", len(Peers), fmt.Sprint(Peers))
+
+			newNodePeers := make(map[string]noise.ID)
+			newNodePeerCurrencies := make(map[string][]string)
+
+			pingMes := []noise.ID{}
+
+			for _, p := range Peers {
+				_, ok := NodePeers[p.Address]
+				if ok {
+					newNodePeers[p.Address] = p
+					newNodePeerCurrencies[p.Address] = NodePeerCurrencies[p.Address]
+				} else {
+					pingMes = append(pingMes, p)
+				}
+			}
+
+			NodePeers = newNodePeers
+			NodePeerCurrencies = newNodePeerCurrencies
+
+			// Get info from new, unknown peers
+			for _, p := range pingMes {
+				SendGetPeerType(p.Address)
+			}
 
 			// wait 10 mins before refreshing peer list
 			// Could be subject to change
@@ -140,13 +197,13 @@ func InitP2P() {
 
 }
 
-func SendGetNodeType(addr string) error {
+func SendGetPeerType(addr string) error {
 	timeoutCtx, _ := context.WithTimeout(context.Background(), time.Duration(5*time.Second))
 
 	if err := Node.Send(timeoutCtx, addr, ([]byte)("peerinfo")); err != nil {
 		fmt.Printf("Error getting node type: %s\n", fmt.Sprint(err))
 	} else {
-		fmt.Printf("Sent GetNodeType to %s\n", addr)
+		fmt.Printf("Sent GetPeerInfo to %s\n", addr)
 	}
 
 	return nil
@@ -156,9 +213,13 @@ func SendPaymentIntent(intent xutil.PaymentIntent) error {
 
 	timeoutCtx, _ := context.WithTimeout(context.Background(), time.Duration(5*time.Second))
 
-	allowableErrs := len(Peers)
+	allowableErrs := len(NodePeers)
 	errCount := 0
-	for _, peer := range Peers {
+	for _, peer := range NodePeers {
+
+		// NOTE: probably want to check supported currencies before sending ping or something idk
+		// may be expensive to do for each peer tho
+
 		if err := Node.SendMessage(timeoutCtx, peer.Address, intent); err != nil {
 			errCount += 1
 			fmt.Printf("SENDMESSAGE ERROR: %s\n", err)
@@ -166,12 +227,6 @@ func SendPaymentIntent(intent xutil.PaymentIntent) error {
 			fmt.Printf("Sent intent to node %s\n", peer.Address)
 		}
 	}
-
-	// if err := Node.SendMessage(timeoutCtx, "10.142.26.69:9871", intent); err != nil {
-	// 	fmt.Printf("ERROR %s\n", err)
-	// } else {
-	// 	fmt.Println("Successfully sent message to node")
-	// }
 
 	if allowableErrs-errCount <= 0 {
 		return fmt.Errorf("not enough nodes were contacted")
