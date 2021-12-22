@@ -5,6 +5,7 @@
 package server
 
 import (
+	"encoding/json"
 	"fmt"
 	"math"
 	"math/big"
@@ -19,6 +20,7 @@ import (
 	"xserver/xutil/currencies"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/websocket/v2"
 	"github.com/patrickmn/go-cache"
 )
 
@@ -129,4 +131,29 @@ func NewServer() *fiber.App {
 	}
 
 	return app
+}
+
+func AddPaymentStatusWssEndpoint(app *fiber.App, resp xutil.PaymentResponse) {
+	app.Get(fmt.Sprintf("/ws/%s", resp.To), websocket.New(func(c *websocket.Conn) {
+		for {
+
+			// c.WriteMessage(0, []byte("This is information."))
+			var status string
+			switch resp.Status {
+			case xutil.Empty:
+				status = "empty"
+			case xutil.Pending:
+				status = "pending"
+			case xutil.Verified:
+				status = "verified"
+			case xutil.IntentError:
+				status = "error"
+			default:
+				status = "error"
+			}
+			var a interface{}
+			json.Unmarshal(([]byte)(fmt.Sprintf(`{"status": "%s"}`, status)), a)
+			c.WriteJSON(a)
+		}
+	}))
 }
