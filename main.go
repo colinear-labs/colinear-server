@@ -6,12 +6,12 @@ import (
 	"log"
 	"strings"
 
-	"xserver/config"
-	"xserver/flags"
-	"xserver/intents"
-	"xserver/p2p"
-	"xserver/server"
-	"xserver/xutil/currencies"
+	"github.com/colinear-labs/colinear-server/config"
+	"github.com/colinear-labs/colinear-server/flags"
+	"github.com/colinear-labs/colinear-server/intents"
+	"github.com/colinear-labs/colinear-server/p2p"
+	"github.com/colinear-labs/colinear-server/server"
+	"github.com/colinear-labs/colinear-server/xutil/currencies"
 )
 
 func main() {

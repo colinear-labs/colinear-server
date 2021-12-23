@@ -4,7 +4,8 @@ import (
 	"fmt"
 	"math/rand"
 	"strings"
-	"xserver/xutil/currencies"
+
+	"github.com/colinear-labs/colinear-server/xutil/currencies"
 
 	"github.com/foxnut/go-hdwallet"
 )

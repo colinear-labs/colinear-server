@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"time"
 
-	"xserver/flags"
-	"xserver/intents"
-	"xserver/xutil"
-	"xserver/xutil/currencies"
-	"xserver/xutil/ipassign"
-	"xserver/xutil/p2pshared"
+	"github.com/colinear-labs/colinear-server/flags"
+	"github.com/colinear-labs/colinear-server/intents"
+	"github.com/colinear-labs/colinear-server/xutil"
+	"github.com/colinear-labs/colinear-server/xutil/currencies"
+	"github.com/colinear-labs/colinear-server/xutil/ipassign"
+	"github.com/colinear-labs/colinear-server/xutil/p2pshared"
 
 	"github.com/patrickmn/go-cache"
 	"github.com/perlin-network/noise"

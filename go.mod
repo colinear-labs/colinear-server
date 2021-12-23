@@ -1,4 +1,4 @@
-module xserver
+module github.com/colinear-labs/colinear-server
 
 go 1.17
 
