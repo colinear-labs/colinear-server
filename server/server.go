@@ -93,6 +93,9 @@ func NewServer() *fiber.App {
 		}
 		intents.WatchPendingCache.Set(address, intent, cache.DefaultExpiration)
 
+		statusChannel := make(chan xutil.PaymentStatus)
+		intents.WatchPendingCache.Set(address, statusChannel, cache.DefaultExpiration)
+
 		return c.JSON(fiber.Map{
 			"amount":  amount,
 			"address": address,

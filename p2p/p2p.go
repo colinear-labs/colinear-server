@@ -64,11 +64,15 @@ func InitP2P() {
 		// See: https://github.com/perlin-network/noise/blob/master/example_codec_messaging_test.go#L78
 
 		paymentResponse, ok := obj.(xutil.PaymentResponse)
+		channel, _ := intents.PaymentStatusUpdateChannels.Get(paymentResponse.To)
 		if ok {
 			if paymentResponse.Status == xutil.Pending {
 				entry, ok := intents.WatchPendingCache.Get(paymentResponse.To)
 				if ok {
+
 					intents.WatchVerifiedCache.Set(paymentResponse.To, entry, cache.DefaultExpiration)
+					channel.(chan xutil.PaymentStatus) <- xutil.Pending
+
 					fmt.Println("💸 Payment pending.")
 					if flags.Mode == "single" {
 						// SEND A WEBHOOK
@@ -77,7 +81,10 @@ func InitP2P() {
 					}
 				}
 			} else if paymentResponse.Status == xutil.Verified {
+
 				intents.WatchVerifiedCache.Delete(paymentResponse.To)
+				channel.(chan xutil.PaymentStatus) <- xutil.Verified
+
 				fmt.Println("✅ Payment verified!")
 				if flags.Mode == "single" {
 					// SEND A WEBHOOK
