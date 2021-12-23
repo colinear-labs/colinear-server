@@ -123,6 +123,50 @@ func NewServer() *fiber.App {
 
 	})
 
+	app.Get("/ws/:toAddr", websocket.New(func(c *websocket.Conn) {
+		toAddr := c.Params("toAddr")
+
+		var statusValue string
+
+		statusChannel, ok := intents.PaymentStatusUpdateChannels.Get(toAddr)
+		if !ok {
+			statusValue = "error"
+			return
+		}
+
+	statusLoop:
+		for {
+
+			// write to ws
+			var a interface{}
+			json.Unmarshal(([]byte)(fmt.Sprintf(`{"status": "%s"}`, statusValue)), a)
+			c.WriteJSON(a)
+
+			status, ok := <-statusChannel.(chan xutil.PaymentStatus)
+			if !ok {
+				statusValue = "error"
+			}
+
+			statusValue, ok = map[xutil.PaymentStatus]string{
+				xutil.Empty:       "empty",
+				xutil.Pending:     "pending",
+				xutil.Verified:    "verified",
+				xutil.IntentError: "error",
+			}[status]
+
+			if !ok {
+				statusValue = "error"
+			}
+
+			// check if finished state
+			switch statusValue {
+			case "verified", "error":
+				break statusLoop
+			}
+
+		}
+	}))
+
 	// Serve static widget
 	app.Static("/widget", "./widget")
 
@@ -133,26 +177,36 @@ func NewServer() *fiber.App {
 	return app
 }
 
-func AddPaymentStatusWssEndpoint(app *fiber.App, resp xutil.PaymentResponse) {
-	app.Get(fmt.Sprintf("/ws/%s", resp.To), websocket.New(func(c *websocket.Conn) {
+// DEPRECATED; DO NOT USE THIS LOL
+//
+// No way to delete endpoints as of right now, so could pose a memory issue
+func AddPaymentStatusWssEndpoint(app *fiber.App, toAddr string, responseChannel chan xutil.PaymentStatus) {
+
+	app.Get(fmt.Sprintf("/ws/%s", toAddr), websocket.New(func(c *websocket.Conn) {
+
+	statusLoop:
 		for {
 
-			// c.WriteMessage(0, []byte("This is information."))
-			var status string
-			switch resp.Status {
+			status := <-responseChannel
+
+			var statusValue string
+			switch status {
 			case xutil.Empty:
-				status = "empty"
+				statusValue = "empty"
 			case xutil.Pending:
-				status = "pending"
+				statusValue = "pending"
 			case xutil.Verified:
-				status = "verified"
+				statusValue = "verified"
+				break statusLoop
 			case xutil.IntentError:
-				status = "error"
+				statusValue = "error"
+				break statusLoop
 			default:
-				status = "error"
+				statusValue = "error"
 			}
+
 			var a interface{}
-			json.Unmarshal(([]byte)(fmt.Sprintf(`{"status": "%s"}`, status)), a)
+			json.Unmarshal(([]byte)(fmt.Sprintf(`{"status": "%s"}`, statusValue)), a)
 			c.WriteJSON(a)
 		}
 	}))
