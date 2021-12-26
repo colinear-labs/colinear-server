@@ -25,7 +25,7 @@ Run the server:
 
 Clone the repository:
 ```shell
-git clone --recursive https://github.com/Super-Secret-Crypto-Kiddies/x-server.git
+git clone --recursive https://github.com/colinear-labs/colinear-server.git
 ```
 
 Build in dev mode:
