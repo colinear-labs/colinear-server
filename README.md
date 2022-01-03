@@ -1,19 +1,11 @@
-# X Server
+# Colinear Payments Server
 
 ## Installation (SUBJECT TO CHANGE)
 
-### Prerequisites:
-- `python3`
-
 Download from github releases:
 ```shell
-<curl link once release is out>
+<curl link once initial release is out>
 cd <directory>
-```
-
-Generate a config & walk through prompt:
-```shell
-./genconfig.py
 ```
 
 Run the server:
@@ -28,9 +20,10 @@ Clone the repository:
 git clone --recursive https://github.com/colinear-labs/colinear-server.git
 ```
 
-Build in dev mode:
+Build & run in dev mode:
 ```shell
 make dev
+go run main.go
 ```
 
 Build a full local release:

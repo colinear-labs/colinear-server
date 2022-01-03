@@ -34,6 +34,7 @@ func InitP2P() {
 
 	port := 9871
 	broadcastIp := ipassign.GetIPv6Address()
+	// broadcastIp := ipassign.GetIPv4Address()
 
 	Node, _ = noise.NewNode(
 		// noise.WithNodeLogger(logger),
