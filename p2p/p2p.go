@@ -9,7 +9,6 @@ import (
 	"github.com/colinear-labs/colinear-server/intents"
 	"github.com/colinear-labs/colinear-server/xutil"
 	"github.com/colinear-labs/colinear-server/xutil/currencies"
-	"github.com/colinear-labs/colinear-server/xutil/ipassign"
 	"github.com/colinear-labs/colinear-server/xutil/p2pshared"
 
 	"github.com/patrickmn/go-cache"
@@ -22,7 +21,7 @@ var Peers = []noise.ID{}
 var NodePeers = make(map[string]noise.ID)
 var NodePeerCurrencies = make(map[string][]string)
 
-func InitP2P() {
+func InitP2P(broadcastAddr string, port int) {
 
 	// logger, err := zap.NewDevelopment(zap.AddStacktrace(zap.PanicLevel))
 
@@ -32,14 +31,14 @@ func InitP2P() {
 
 	// defer logger.Sync()
 
-	port := 9871
-	broadcastIp := ipassign.GetIPv6Address()
+	// port := 9871
+	// broadcastIp := ipassign.GetIPv6Address()
 	// broadcastIp := ipassign.GetIPv4Address()
 
 	Node, _ = noise.NewNode(
 		// noise.WithNodeLogger(logger),
-		noise.WithNodeAddress(fmt.Sprintf("[%s]:%d", broadcastIp, port)),
-		// noise.WithNodeAddress(broadcastIp),
+		// noise.WithNodeAddress(fmt.Sprintf("[%s]:%d", broadcastIp, port)),
+		noise.WithNodeAddress(broadcastAddr),
 		noise.WithNodeBindPort((uint16)(port)),
 	)
 

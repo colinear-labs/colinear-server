@@ -12,6 +12,7 @@ import (
 	"github.com/colinear-labs/colinear-server/p2p"
 	"github.com/colinear-labs/colinear-server/server"
 	"github.com/colinear-labs/colinear-server/xutil/currencies"
+	"github.com/colinear-labs/colinear-server/xutil/ipassign"
 )
 
 func main() {
@@ -54,7 +55,36 @@ func main() {
 	}
 
 	intents.InitIntents()
-	p2p.InitP2P()
+
+	// Try to get valid broadcast address for p2p
+
+	p2pPort := 9871
+	broadcastAddr, err := ipassign.GetNatMapping()
+
+	if err != nil {
+		fmt.Println("Failed to get a valid NAT mapping.")
+		broadcastAddr, err = ipassign.GetIPv6Address()
+
+		if err != nil {
+			fmt.Println("Failed to get a valid public IPv6 address.")
+			broadcastAddr, err = ipassign.GetIPv4Address()
+
+			if err != nil {
+				fmt.Println("Failed to get a valid public IPv4 address.")
+				panic("Failed to get a working broadcast address.")
+			} else {
+				broadcastAddr = fmt.Sprintf("%s:%d", broadcastAddr, p2pPort)
+			}
+
+		} else {
+			broadcastAddr = fmt.Sprintf("[%s]:%d", broadcastAddr, p2pPort)
+
+		}
+
+	}
+
+	p2p.InitP2P(broadcastAddr, p2pPort)
+
 	server := server.NewServer()
 	log.Fatal(server.Listen(fmt.Sprintf(":%d", *port)))
 }
